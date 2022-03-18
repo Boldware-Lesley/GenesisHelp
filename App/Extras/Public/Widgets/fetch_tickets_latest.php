@@ -143,7 +143,12 @@ if (isset($MEMBER->recid, $database_server,$Accounts)) {
               //endregion
               //region Mid Row
               echo '<div class="col-6">';
-              echo '<p class="card-text">';
+              if (!empty($row['NOTES'])) {
+                  echo '<p class="card-text">';
+                  echo '' . $row['NOTES'] . '<br/>';
+                  echo '</p>';
+              }
+
               if (!empty($row['NAME'])) {
                   echo '<strong>Account:</strong> ' . $row['NAME'] . '<br/>';
               }
@@ -152,9 +157,6 @@ if (isset($MEMBER->recid, $database_server,$Accounts)) {
               }
               if (!empty($row['DESCRIPTION'])) {
                   echo '<strong>Subject:</strong> ' . $row['DESCRIPTION'] . '<br/>';
-              }
-              if (!empty($row['NOTES'])) {
-                  echo '<strong>Notes:</strong> ' . $row['NOTES'] . '<br/>';
               }
 
               if (!empty($row['LOBCODE'])) {
@@ -177,7 +179,6 @@ if (isset($MEMBER->recid, $database_server,$Accounts)) {
               }
 
 
-              echo '</p>';
               echo '</div>';
               echo '<div class="col-6">';
 

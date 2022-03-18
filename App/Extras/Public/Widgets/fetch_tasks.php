@@ -148,11 +148,13 @@ if (isset($MEMBER->recid, $database_server, $Accounts)) {
                         //endregion
                         //region Mid Row
                         echo '<div class="col-6">';
-                        echo '<p class="card-text">';
-
                         if (!empty($row['NOTES'])) {
-                            echo '<strong>Notes:</strong> ' . $row['NOTES'] . '<br/>';
+                            echo '<p class="card-text">';
+                            echo '' . $row['NOTES'] . '<br/>';
+                            echo '</p>';
                         }
+
+
                         if (!empty($row['JOBTYPENAME'])) {
                             echo '<strong>Job:</strong> ' . $row['JOBTYPENAME'] . '<br/>';
                         }
@@ -172,7 +174,7 @@ if (isset($MEMBER->recid, $database_server, $Accounts)) {
                             echo '<strong>Ticket:</strong> <a class="btn btn-outline-primary" href="' . MAIN_URL . 'Tickets/' .  $row['JOBNO'] . '" >#' . $row['JOBNO'] . '</a><br/>';
                         }
 
-                        echo '</p>';
+
                         echo '</div>';
                         echo '<div class="col-6">';
                         if (!empty($row['DATELOGGED'])) {
