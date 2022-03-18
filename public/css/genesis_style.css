@@ -1,0 +1,204 @@
+a,.btn-link,.btn-link:hover  {
+ color: #F58020 ;
+}
+
+a:focus ,a:hover,a:active   {
+    color: #000000 ;
+}
+
+.hk-wrapper .hk-navbar.navbar-dark {
+    background: #EDEDED;
+}
+.hk-wrapper .hk-navbar.navbar-dark a.navbar-toggle-btn,.hk-wrapper .hk-navbar.navbar-dark .navbar-nav.hk-navbar-content .nav-item .nav-link {
+    color: #000000;
+}
+.nav-link:hover,.nav-link:focus ,.nav-link:active {
+    color: #F58020;
+}
+/*region Colours*/
+.bg-info{
+    background-color: #474646 !important;
+    color: #F58020;
+}
+.bg-info *{
+    color: #ffffff !important;
+}
+.badge.badge-soft-cyan, .badge.badge-soft-info {
+    background: #eedecf;
+    color: #F58020;
+}
+/*endregion*/
+/*region Buttons*/
+.btn-primary,.btn-outline-primary:hover  {
+ border-color: #fff5e0  !important;
+ background-color: #F58020  !important;
+ color: #fff5e0  !important;
+}
+.btn-outline-primary,.bg-outline-primary   {
+ border-color: #F58020 !important;
+ background-color: transparent  !important;
+ color: #F58020 !important;
+}
+.bg-primary   {
+ background-color: #F58020  !important;
+ color: #fff5e0 !important;
+}
+.text-primary   {
+ color: #F58020  !important;
+}
+.alert-primary   {
+ color: #F58020  !important;
+ background-color: #fff5e0 !important;
+ border-color: #fff5e0   !important;
+}
+
+.btn-outline-primary,.btn-outline-success,.btn-outline-warning,.btn-outline-secondary,.btn-outline-danger,.btn-outline-info {
+
+}
+
+.bg-outline-primary{
+    border: 1px solid transparent !important;
+}
+.btn-white {
+    color: #333 !important;
+    background-color: #fff !important;
+    border-color: #fff !important;
+}
+.btn {
+    display: inline-block;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+
+.btn-app {
+    border-radius: 3px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #6c757d;
+    font-size: 12px;
+    height: 60px;
+    margin: 0 0 10px 10px;
+    min-width: 80px;
+    padding: 15px 5px;
+    position: relative;
+    text-align: center;
+}
+
+.btn-app > .fa,
+.btn-app > .fas,
+.btn-app > .far,
+.btn-app > .fab,
+.btn-app > .fal,
+.btn-app > .fad,
+.btn-app > .svg-inline--fa,
+.btn-app > .ion {
+    display: block;
+    font-size: 20px;
+}
+
+.btn-app > .svg-inline--fa {
+    margin: 0 auto;
+}
+
+.btn-app:hover {
+    background-color: #f8f9fa;
+    border-color: #aaaaaa;
+    color: #444;
+}
+
+.btn-app:active, .btn-app:focus {
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+.btn-app > .badge {
+    font-size: 10px;
+    font-weight: 400;
+    position: absolute;
+    right: -10px;
+    top: -3px;
+}
+
+.btn-xs {
+    padding: 0.125rem 0.25rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    border-radius: 0.15rem;
+}
+
+.dark-mode .btn-default,
+.dark-mode .btn-app {
+    background-color: #3a4047;
+    color: #fff;
+    border-color: #6c757d;
+}
+
+.dark-mode .btn-default:hover, .dark-mode .btn-default:focus,
+.dark-mode .btn-app:hover,
+.dark-mode .btn-app:focus {
+    background-color: #3f474e;
+    color: #dee2e6;
+    border-color: #727b84;
+}
+
+.dark-mode .btn-light {
+    background-color: #454d55;
+    color: #fff;
+    border-color: #6c757d;
+}
+.btn .badge {
+    position: relative;
+    top: -1px;
+}
+.btn-app>.badge {
+    font-size: 10px;
+    font-weight: 400;
+    position: absolute;
+    right: -10px;
+    top: -3px;
+}
+/*endregion*/
+ul.elementor-icon-list-items.elementor-inline-items {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+.elementor-widget.elementor-align-right .elementor-icon-list-items {
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+}
+.elementor-widget.elementor-align-right .elementor-icon-list-item, .elementor-widget.elementor-align-right .elementor-icon-list-item a {
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+    text-align: right;
+}
+.elementor-widget .elementor-icon-list-item, .elementor-widget .elementor-icon-list-item a {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: inherit;
+}
+.elementor-icon-list-icon i {
+    width: 1.25em;
+    font-size: 20pt;
+}

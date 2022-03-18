@@ -1,0 +1,183 @@
+<section>
+    <div class="clearfix"></div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTicket" data-toggle="modal" data-target="#newTicket">
+        <i class="fa fa-plus"></i> New Ticket
+    </button>
+    <div id="msgMain"></div>
+    <hr/>
+    <div class="clearfix"></div>
+    <div class="search-container">
+        <form id="searchForm">
+            <div class="form-floating mb-3">
+                <select class="form-control" required name="status" id="mStatus" >
+                    <option value="">All..</option>
+                    {TICKET_STATUS_OPTIONS}
+                </select>
+                <label for="mStatus">Status</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input id="floatingSearch"  type="text" name="search" class="form-control" placeholder="search here">
+                <label for="floatingSearch">Search here</label>
+            </div>
+        </form>
+    </div><br/>
+    <div class="clearfix"></div>
+    <div>
+        <div id="list_overlay" class="overlay"><i class="fa fa-cog fa-spin"></i> <span id="dataList_loader"
+                                                                                       class="loader">Loading...</span>
+        </div>
+        <div id="dataList"></div>
+    </div>
+</section>
+<!--region Modals-->
+<div class="modal fade" id="newTicket" >
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <form id="frmNewTicket" enctype="multipart/form-data" >
+            <div class="modal-header">
+                <h5 class="modal-title" id="newTicketLabel">Ticket</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"  data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <section class="container">
+
+                        <div class="form-floating mb-2">
+                            <select class="form-control" required name="account" id="account" >
+                                <option value="">Select Account...</option>
+                                <optgroup label="Accounts">
+                                    {ACCOUNT_OPTIONS}
+                                </optgroup>
+                            </select>
+                            <label for="account">Account</label>
+                        </div>
+
+                    <div class="form-floating mb-2">
+                        <select class="form-control" required name="lob" id="LOB" >
+                            <option value="">Select Line Of Business...</option>
+                            <optgroup>
+                                {LOB_OPTIONS}
+                            </optgroup>
+                        </select>
+                        <label for="LOB">Line Of Business</label>
+                    </div>
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control" required name="subject" placeholder="Subject" id="txtSubject">
+                        <label for="txtSubject">Subject</label>
+                    </div>
+                    <div class="form-floating mb-2">
+                        <textarea class="form-control" name="notes" placeholder="Notes" id="txtNotes" style="min-height: 100px"></textarea>
+                        <label for="txtNotes">Notes</label>
+                    </div>
+
+                    <div class="input-field">
+                        <label class="active">Photos</label>
+                        <div class="input-images" style="padding-top: .5rem;"></div>
+                    </div>
+                </section>
+                <div id="msgBox"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--endregion-->
+
+<!--Scripts -->
+<script type="application/javascript">
+    $("#searchForm select[name='status']").val("{DEF_STATUS}");
+    $(document).ready(function() {
+        $('.input-images').imageUploader();
+        $("#searchForm select[name='status']").on('change', function() {
+            $("#searchForm").submit();
+        });
+    });
+    $("#searchForm").submit(function () {
+
+        const formData = new FormData($(this)[0]);
+        let q = formData.get("search");
+        let status = formData.get("status");
+
+        $("#list_overlay").show();
+        $('#dataList').load('{MAIN_URL}App/Extras/Public/Widgets/fetch_tickets.php',{"Q":q,"STATUS":status},
+            function (response, status, xhr) {
+                $("#list_overlay").hide();
+                $('.lazy').Lazy();
+            });
+
+
+        return false; // avoid to execute the actual submit of the form.
+    });
+    $("#dataList").on("click", ".pagination a", function (e) {
+        e.preventDefault();
+        const q = $("#searchForm input[name='search']").val();
+        const status = $("#searchForm select[name='status']").val();
+        const page = $(this).attr("data-page");
+        const top_pos = $("#dataList").offset().top;
+        $("#dataList_loader").html("Loading Page(" + page + ")...");
+        $("#list_overlay").show(); //show loading element
+        //get page number from link
+        $("#dataList").load("{MAIN_URL}App/Extras/Public/Widgets/fetch_tickets.php", {"page": page,"Q":q,"STATUS":status}, function () { //get content from PHP page
+            $("#list_overlay").hide(); //once done, hide loading element
+            $('.lazy').Lazy();
+            window.scrollTo(0, top_pos - 60);
+        })
+    });
+    $("#frmNewTicket").bind("reset", function() {
+        $('.input-images').html("");
+        $('.input-images').imageUploader();
+    });
+    $("#frmNewTicket").submit(function () {
+        let formData = new FormData($(this)[0]);
+        let url = "{MAIN_URL}App/Extras/Public/Actions/new_ticket.php"; // the script where you handle the form input.
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            beforeSend: function () {
+                $('#msgBox').html("<span class='loading'>Saving...<i class='fa fa-spin fa-gear'></i></span>");
+                return true;
+            },
+            success: function (data) {
+                $('#msgBox').html('');
+                if (typeof data !== 'undefined' && data !== null) {
+                    if (IsJsonString(data)) {
+                        const result = JSON.parse(data);
+                        if (result.CODE === "0") {
+                            toastr.success(result.MESSAGE, 'Success!');
+                            $("#frmNewTicket").trigger("reset");
+                            $('#newTicket').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $("#searchForm").submit();
+                        } else {
+                            $('#msgBox').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + result.MESSAGE + ' </div>');
+
+                        }
+                    } else {
+                        $('#msgBox').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + data + ' </div>');
+
+                    }
+                } else {
+                    $('#msgBox').html('<div class="alert alert-danger" role="alert"> <strong>NULL!</strong> ' + data + ' </div>');
+                }
+            },
+            error: function (request, status, error) {
+
+                $('#msgBox').html('<div class="alert alert-danger" role="alert"> <strong>Script!</strong> ' + status + '/' + error  + ' </div>');
+            }
+
+        });
+
+        return false; // avoid to execute the actual submit of the form.
+    });
+    $("#searchForm").submit();
+
+</script>

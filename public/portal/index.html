@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{APPNAME} - {TITLE}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="Ntobeng Ntjana">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="google" content="notranslate">
+    <meta name="robots" content="ALL">
+    <meta name="application-name" content="{APPNAME}">
+    <meta name="keywords"
+          content="Ntobeng Ntjana, Karabo Maelane, Boldware Corporation, Boldware Group"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="shortcut icon" type="image/x-icon" href="{APP_ICON}">
+    <meta name="google-site-verification" content="my2O0ncC40M2ezDJG7VJPxymeWmCRw5MDezZPArpkNs"/>
+
+    <!-- vector map CSS -->
+    <link href="{THEME_URL}vendors/vectormap/jquery-jvectormap-2.0.3.css" rel="stylesheet" type="text/css"/>
+
+    <!-- Toggles CSS -->
+    <link href="{THEME_URL}vendors/jquery-toggles/css/toggles.css" rel="stylesheet" type="text/css">
+    <link href="{THEME_URL}vendors/jquery-toggles/css/themes/toggles-light.css" rel="stylesheet" type="text/css">
+    <!--Material Design Iconic Font-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+
+    <!-- Custom CSS -->
+    <link href="{THEME_URL}dist/css/style.css" rel="stylesheet" type="text/css">
+    <link href="{MAIN_URL}public/plugins/bootstrap-5.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{MAIN_URL}public/css/genesis_style.css" rel="stylesheet" type="text/css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="{MAIN_URL}public/css/toastr.min.css"/>
+    <!-- Image Uploader CSS -->
+    <link rel="stylesheet" href="{MAIN_URL}public/plugins/jquery-image-uploader/image-uploader.min.css">
+    <!-- jQuery -->
+    <script src="{MAIN_URL}public/plugins/jquery/jquery-3.6.0.min.js"></script>
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{MAIN_URL}public/js/genesis_utils.js"></script>
+    <script src="{MAIN_URL}public/js/toastr.min.js"></script>
+    <script type="text/javascript" src="{MAIN_URL}public/plugins/DataTables/datatables.min.js"></script>
+    <script type="text/javascript" src="{MAIN_URL}public/plugins/jquery.lazy-master/jquery.lazy.min.js"></script>
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": false,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+    </script>
+</head>
+
+<body>
+<div class="preloader-it">
+    <div class="loader-pendulums"></div>
+</div>
+<div class="hk-wrapper hk-vertical-nav">
+    <nav class="navbar navbar-expand-xl navbar-dark fixed-top hk-navbar"><a id="navbar_toggle_btn"
+                                                                            class="navbar-toggle-btn nav-link-hover"
+                                                                            href="javascript:void(0);"><i
+            class="ion ion-ios-menu"></i></a> <a class="navbar-brand" href="{MAIN_URL}"> <img
+            class="brand-img d-inline-block" src="{APP_LOGO}" alt="{APPNAME}" style="max-width: 160px;max-height: 80px"/> </a>
+        <ul class="navbar-nav hk-navbar-content">
+
+            <li class="nav-item dropdown dropdown-authentication"><a class="nav-link dropdown-toggle no-caret" href="#"
+                                                                     role="button" data-toggle="dropdown"
+                                                                     aria-haspopup="true" aria-expanded="false">
+                <div class="media">
+                    <div class="media-img-wrap">
+                        <div class="avatar"><img src="{USERAVATAR}" alt="{USERNAME}" class="avatar-img rounded-circle">
+                        </div>
+                        <span class="badge badge-success badge-indicator"></span></div>
+                    <div class="media-body"><span>{USERNAME}<i class="zmdi zmdi-chevron-down"></i></span></div>
+                </div>
+            </a>
+                <div class="dropdown-menu dropdown-menu-right" data-dropdown-in="flipInX" data-dropdown-out="flipOutX">
+                    <a class="dropdown-item" href="{MAIN_URL}Me"><i class="dropdown-icon zmdi zmdi-account"></i><span>Profile</span></a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{MAIN_URL}Auth/Out"><i
+                            class="dropdown-icon zmdi zmdi-power"></i><span>Log out</span></a></div>
+            </li>
+        </ul>
+    </nav>
+    <nav class="hk-nav hk-nav-light"><a href="javascript:void(0);" id="hk_nav_close" class="hk-nav-close"><span
+            class="feather-icon"><i data-feather="x"></i></span></a>
+        <div class="nicescroll-bar">
+            <div class="navbar-nav-wrap">
+                <ul class="navbar-nav flex-column">
+                    {MENU_BAR}
+                </ul>
+
+            </div>
+            <hr/>
+            <ul class="elementor-icon-list-items elementor-inline-items">
+                <li class="elementor-icon-list-item elementor-inline-item">
+                    <a href="https://www.facebook.com/Mrjconsultants/" target="_blank">
+
+												<span class="elementor-icon-list-icon">
+							<i aria-hidden="true" class="fa fa-facebook-f"></i>						</span>
+                        <span class="elementor-icon-list-text"></span>
+                    </a>
+                </li>
+                <li class="elementor-icon-list-item elementor-inline-item">
+                    <a href="https://www.youtube.com/channel/UCyiopykkQ0S2q1UWSbQAYhA" target="_blank">
+                         <span class="elementor-icon-list-icon">
+							<i aria-hidden="true" class="fa fa-youtube"></i>						</span>
+                        <span class="elementor-icon-list-text"></span>
+                    </a>
+                </li>
+                <li class="elementor-icon-list-item elementor-inline-item">
+                    <a href="https://wa.me/+27126540300" target="_blank">
+                            <span class="elementor-icon-list-icon">
+							<i aria-hidden="true" class="fa fa-whatsapp"></i>						</span>
+                        <span class="elementor-icon-list-text"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="hk_nav_backdrop" class="hk-nav-backdrop"></div>
+    <div class="hk-pg-wrapper">
+        <nav class="breadcrumb" aria-label="breadcrumb" style="padding-top: 0.5em;padding-left: 0.5em;">
+            <ol class="breadcrumb bg-transparent">
+                {BREADCRUMB}
+            </ol>
+        </nav>
+        <div class="container-fluid mt-xl-50 mt-sm-30 mt-15"> [CONTENTS_BODY]</div>
+        <div class="hk-footer-wrap container">
+            <footer class="footer">
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <p>By<a href="http://boldwaregroup.com" class="text-dark" target="_blank">Boldware Group</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+<script src="{MAIN_URL}public/plugins/jquery-image-uploader/image-uploader.min.js"></script>
+<script src="{THEME_URL}dist/js/jquery.slimscroll.js"></script>
+<script src="{THEME_URL}dist/js/dropdown-bootstrap-extended.js"></script>
+<script src="{THEME_URL}dist/js/feather.min.js"></script>
+<script src="{THEME_URL}vendors/jquery-toggles/toggles.min.js"></script>
+<script src="{THEME_URL}dist/js/toggle-data.js"></script>
+<script src="{THEME_URL}vendors/owl.carousel/dist/owl.carousel.min.js"></script>
+<script src="{THEME_URL}dist/js/init.js"></script>
+<script src="{MAIN_URL}public/plugins/bootstrap-5.0.2/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

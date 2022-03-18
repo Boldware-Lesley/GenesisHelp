@@ -1,0 +1,236 @@
+<section>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><i class="fa fa-ticket"></i> {OBJ_SUBJECT}</h5>
+            <p class="card-text">{OBJ_NOTES}</p>
+        </div>
+    </div>
+    </div>
+    <div class="clearfix"></div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newComment" data-toggle="modal" data-target="#newComment">
+        <i class="fa fa-plus"></i> Add Comment
+    </button>
+    <div id="msgMain"></div>
+    <hr/>
+    <div class="clearfix"></div>
+    <div class="search-container">
+        <form id="searchForm">
+            <div class="form-floating mb-3">
+                <input id="floatingSearch"  type="text" name="search" class="form-control" placeholder="search here">
+                <label for="floatingSearch">Search here</label>
+            </div>
+        </form>
+    </div><br/>
+    <div class="clearfix"></div>
+    <div>
+        <div id="list_overlay" class="overlay"><i class="fa fa-cog fa-spin"></i> <span id="dataList_loader"
+                                                                                       class="loader">Loading...</span>
+        </div>
+        <div id="dataList"></div>
+    </div>
+</section>
+<!--region Modals-->
+<div class="modal fade" id="newComment" tabindex="-1" aria-labelledby="newCommentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl ">
+        <div class="modal-content">
+            <form id="frmNewComment" enctype="multipart/form-data" >
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newCommentLabel">New Comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"  data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <section class="container">
+
+                        <div class="form-floating mb-2">
+                            <textarea class="form-control" name="notes" placeholder="Comment" id="txtNotes" style="min-height: 100px"></textarea>
+                            <label for="txtNotes">Comment</label>
+                        </div>
+
+                        <div class="input-field">
+                            <label class="active">Photos</label>
+                            <div class="input-images" style="padding-top: .5rem;"></div>
+                        </div>
+                    </section>
+                    <div id="msgBox"></div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="jobno" value="{OBJ_NO}"/>
+                    <input type="hidden" name="line" value="0"/>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="newLinePhoto" tabindex="-1" aria-labelledby="newLinePhotoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl ">
+        <div class="modal-content">
+            <form id="frmNewLinePhoto" enctype="multipart/form-data" >
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newLinePhotoLabel">New Photos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"  data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <section class="container">
+                        <div class="input-field">
+                            <label class="active">Photos</label>
+                            <div class="input-images" style="padding-top: .5rem;"></div>
+                        </div>
+                    </section>
+                    <div id="msgBox_Photo"></div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="jobno" value="{OBJ_NO}"/>
+                    <input type="hidden" name="line" value="0"/>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--endregion-->
+
+<!--Scripts -->
+<script type="application/javascript">
+    $(document).ready(function() {
+        $('.input-images').imageUploader();
+
+    });
+    $("#searchForm").submit(function () {
+
+        const formData = new FormData($(this)[0]);
+        let q = formData.get("search");
+
+        $("#list_overlay").show();
+        $('#dataList').load('{MAIN_URL}App/Extras/Public/Widgets/fetch_ticket_lines.php',{"Q":q,"JOB":"{OBJ_NO}"},
+            function (response, status, xhr) {
+                $("#list_overlay").hide();
+                $('.lazy').Lazy();
+            });
+
+
+        return false; // avoid to execute the actual submit of the form.
+    });
+    $("#dataList").on("click", ".pagination a", function (e) {
+        e.preventDefault();
+        const q = $("#searchForm input[name='search']").val();
+        const page = $(this).attr("data-page");
+        const top_pos = $("#dataList").offset().top;
+        $("#dataList_loader").html("Loading Page(" + page + ")...");
+        $("#list_overlay").show(); //show loading element
+        //get page number from link
+        $("#dataList").load("{MAIN_URL}App/Extras/Public/Widgets/fetch_ticket_lines.php", {"page": page,"Q":q,"JOB":"{OBJ_NO}"}, function () { //get content from PHP page
+            $("#list_overlay").hide(); //once done, hide loading element
+            $('.lazy').Lazy();
+            window.scrollTo(0, top_pos - 60);
+        })
+    });
+    $("#frmNewComment").bind("reset", function() {
+        $('.input-images').html("");
+        $('.input-images').imageUploader();
+    });
+    $("#frmNewComment").submit(function () {
+        let formData = new FormData($(this)[0]);
+        let url = "{MAIN_URL}App/Extras/Public/Actions/new_ticket_comment.php"; // the script where you handle the form input.
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            beforeSend: function () {
+                $('#msgBox').html("<span class='loading'>Saving...<i class='fa fa-spin fa-gear'></i></span>");
+                return true;
+            },
+            success: function (data) {
+                $('#msgBox').html('');
+                if (typeof data !== 'undefined' && data !== null) {
+                    if (IsJsonString(data)) {
+                        const result = JSON.parse(data);
+                        if (result.CODE === "0") {
+                            $("#frmNewComment").trigger("reset");
+                            $('#newComment').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $("#searchForm").submit();
+                        } else {
+                            $('#msgBox').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + result.MESSAGE + ' </div>');
+
+                        }
+                    } else {
+                        $('#msgBox').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + data + ' </div>');
+
+                    }
+                } else {
+                    $('#msgBox').html('<div class="alert alert-danger" role="alert"> <strong>NULL!</strong> ' + data + ' </div>');
+                }
+            },
+            error: function (request, status, error) {
+
+                $('#msgBox').html('<div class="alert alert-danger" role="alert"> <strong>Script!</strong> ' + status + '/' + error  + ' </div>');
+            }
+
+        });
+
+        return false; // avoid to execute the actual submit of the form.
+    });
+
+    $("#frmNewLinePhoto").bind("reset", function() {
+        $('.input-images').html("");
+        $('.input-images').imageUploader();
+    });
+
+    $("#frmNewLinePhoto").submit(function () {
+        let formData = new FormData($(this)[0]);
+        let url = "{MAIN_URL}App/Extras/Public/Actions/new_ticket_line_file.php"; // the script where you handle the form input.
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: formData,
+            beforeSend: function () {
+                $('#msgBox_Photo').html("<span class='loading'>Saving...<i class='fa fa-spin fa-gear'></i></span>");
+                return true;
+            },
+            success: function (data) {
+                $('#msgBox_Photo').html('');
+                if (typeof data !== 'undefined' && data !== null) {
+                    if (IsJsonString(data)) {
+                        const result = JSON.parse(data);
+                        if (result.CODE === "0") {
+                            $("#frmNewLinePhoto").trigger("reset");
+                            $('#newLinePhoto').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $("#searchForm").submit();
+                        } else {
+                            $('#msgBox_Photo').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + result.MESSAGE + ' </div>');
+
+                        }
+                    } else {
+                        $('#msgBox_Photo').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + data + ' </div>');
+
+                    }
+                } else {
+                    $('#msgBox_Photo').html('<div class="alert alert-danger" role="alert"> <strong>NULL!</strong> ' + data + ' </div>');
+                }
+            },
+            error: function (request, status, error) {
+
+                $('#msgBox_Photo').html('<div class="alert alert-danger" role="alert"> <strong>Script!</strong> ' + status + '/' + error  + ' </div>');
+            }
+
+        });
+
+        return false; // avoid to execute the actual submit of the form.
+    });
+    $("#searchForm").submit();
+
+</script>

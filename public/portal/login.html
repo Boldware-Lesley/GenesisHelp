@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
+    <title>{APPNAME} - {TITLE}</title>
+    <link href="{APP_ICON}" rel="shortcut icon">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta content="Ntobeng Ntjana" name="author">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="notranslate" name="google">
+    <meta content="ALL" name="robots">
+    <meta content="{APPNAME}" name="application-name">
+    <meta content="Ntobeng Ntjana, Boldware Corporation, Boldware Group" name="keywords"/>
+    <link href="{MAIN_URL}public/plugins/bootstrap-5.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{MAIN_URL}public/plugins/fontawesome/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
+    <link href="{THEME_URL}assets/css/login.css" rel="stylesheet">
+    <link href="{MAIN_URL}public/css/genesis_style.css" rel="stylesheet" type="text/css">
+    <script src="{MAIN_URL}public/js/genesis_utils.js"></script>
+
+</head>
+
+<body>
+<div class="login-one" id="login-one">
+    <form class="login-one-form" id="MyForm" style="{LOGIN_STYLE}">
+        <div class="col">
+            <div class="login-one-ico"><img src="{APP_LOGO}" alt="{APPNAME}" style="object-fit: scale-down;"></div>
+            <div class="form-group">
+                <div>
+                    <h3 id="heading">{TITLE}:</h3>
+                </div>
+                <input class="form-control input" name="u" placeholder="Username" type="text"/>
+                <input class="form-control input" name="p" placeholder="Password" type="password"/>
+                <input name="t" type="hidden" value="{USER_TYPE}"/>
+                <div class="clearfix"></div>
+                <div id="message"></div>
+                <div class="clearfix"></div>
+                <button class="btn btn-primary" id="button" style="background-color:#007ac9;" type="submit">Log in
+                </button>
+                <div class="pull-right">
+                    <a href="{MAIN_URL}Auth/Reg" class="btn btn-dark pull-right" style="{SIGN_UP_STYLE}">Sign Up</a><br/>
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script src="{MAIN_URL}public/plugins/jquery/jquery-3.6.0.min.js"></script>
+<script src="{MAIN_URL}public/plugins/bootstrap-5.0.2/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#MyForm").submit(function () {
+            let formData = new FormData($(this)[0]);
+            let url = "{MAIN_URL}App/Extras/Public/Actions/sign.php"; // the script where you handle the form input.
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                beforeSend: function () {
+                    $('#message').html("<span class='badge'>Authenticating...<i class='fa fa-spin fa-gear'></i></span>");
+                    return true;
+                },
+                success: function (data) {
+                    $('#message').html('');
+                    if (typeof data !== 'undefined' && data !== null) {
+                        if (IsJsonString(data)) {
+                            const result = JSON.parse(data);
+                            if (result.CODE === "0") {
+                                location.reload();
+                            } else {
+                                $('#message').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + result.MESSAGE + ' </div>');
+
+                            }
+                        } else {
+                            $('#message').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + data + ' </div>');
+
+                        }
+                    } else {
+                        $('#message').html('<div class="alert alert-danger" role="alert"> <strong>NULL!</strong> ' + data + ' </div>');
+                    }
+                },
+                error: function (request, status, error) {
+
+                    $('#message').html('<div class="alert alert-danger" role="alert"> <strong>Script!</strong> ' + status + '/' + error  + ' </div>');
+                }
+            });
+
+            return false; // avoid to execute the actual submit of the form.
+        });
+
+    });
+</script>
+</body>
+</html>

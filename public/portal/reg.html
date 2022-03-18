@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport">
+  <title>{APPNAME} - {TITLE}</title>
+  <link href="{APP_ICON}" rel="shortcut icon">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+  <meta content="Ntobeng Ntjana" name="author">
+  <meta content="yes" name="apple-mobile-web-app-capable">
+  <meta content="notranslate" name="google">
+  <meta content="ALL" name="robots">
+  <meta content="{APPNAME}" name="application-name">
+  <meta content="Ntobeng Ntjana, Boldware Corporation, Boldware Group" name="keywords"/>
+  <link href="{MAIN_URL}public/plugins/bootstrap-5.0.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{MAIN_URL}public/plugins/fontawesome/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
+  <link href="{THEME_URL}assets/css/login.css" rel="stylesheet">
+  <link href="{MAIN_URL}public/css/genesis_style.css" rel="stylesheet" type="text/css">
+  <script src="{MAIN_URL}public/js/genesis_utils.js"></script>
+</head>
+
+<body>
+<div class="login-one" id="login-one">
+  <form class="login-one-form" id="MyForm" style="{LOGIN_STYLE}">
+    <div class="col">
+      <div class="login-one-ico"><img src="{APP_LOGO}" alt="{APPNAME}" style="object-fit: scale-down;"></div>
+      <div class="form-group">
+        <div>
+          <h3 id="heading">{TITLE}:</h3>
+        </div>
+        <div class="form-floating mb-2">
+          <input class="form-control" name="gaccount" required="required"  placeholder="Genesis Account" id="txtGAccount" type="text"/>
+          <label for="txtGAccount">Genesis Account</label>
+        </div>
+        <div class="form-floating mb-2">
+          <input class="form-control"  required="required" name="name" placeholder="Name" id="txtName" type="text"/>
+          <label for="txtName">Name</label>
+        </div>
+        <div class="form-floating mb-2">
+          <input class="form-control"  required="required" name="cell" placeholder="Cell Phone" id="txtPhone" type="tel"/>
+          <label for="txtPhone">Cell Phone</label>
+        </div>
+        <div class="form-floating mb-2">
+          <input class="form-control"  required="required" name="email" placeholder="Email" id="txtEmail" type="email"/>
+          <label for="txtEmail">Email</label>
+        </div>
+        <div class="form-floating mb-2">
+          <input class="form-control"  required="required" name="address" placeholder="Address" id="pick-address" onFocus="geolocate()"type="text"/>
+          <label for="pick-address">Address</label>
+          <input type="hidden"  class="main_address" name="floor" />
+          <input type="hidden"  class="main_address" name="street_number" />
+          <input type="hidden"  class="main_address" name="route" />
+          <input type="hidden"  class="main_address" name="sublocality_level_1" />
+          <input type="hidden"  class="main_address" name="locality" />
+          <input type="hidden"  class="main_address" name="administrative_area_level_2" />
+          <input type="hidden"  class="main_address" name="administrative_area_level_1"  />
+          <input type="hidden"  class="main_address" name="postal_code"  />
+          <input type="hidden"  class="main_address" name="country"  />
+          <input type="hidden" name="street_address" class="main_address"/>
+          <input type="hidden" name="suburb_address" class="main_address"/>
+          <input type="hidden" name="town_address" class="main_address"/>
+          <input type="hidden" name="province_address" class="main_address"/>
+          <input type="hidden" name="postal_code_address" class="main_address"/>
+        </div>
+        <div class="form-floating mb-2">
+          <input class="form-control "  required="required" name="pwd" placeholder="Password" id="txtPassword" type="password"/>
+          <label for="txtPassword">Password</label>
+        </div>
+        <div class="form-floating mb-2">
+          <input class="form-control"  required="required" name="cpwd" placeholder="Confirm Password" id="txtConfirmPassword" type="password"/>
+          <label for="txtConfirmPassword">Confirm Password</label>
+        </div>
+
+        <div id="message"></div>
+        <div class="mb-2">
+          <button class="btn btn-primary pull-right" style="background-color:#007ac9;" type="submit">Sign Up
+          </button>
+        </div>
+
+        <div class="pull-right">
+          <a href="{MAIN_URL}Auth" class="btn btn-outline-secondary pull-right" >Already Have Account? Sign In</a><br/>
+        </div>
+
+      </div>
+    </div>
+
+  </form>
+
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1rbO5ijLDbQ1pbLLAAKs4cwwn7R5Bp6Y&libraries=places&callback=initAutocomplete" async defer></script>
+<script src="{MAIN_URL}public/plugins/jquery/jquery-3.6.0.min.js"></script>
+<script src="{MAIN_URL}public/plugins/bootstrap-5.0.2/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+
+  //region Pick Address Using Google Places
+  let autocomplete_places, autocomplete_modal_places;
+  let componentForm = {
+    floor: 'short_name',
+    street_number: 'short_name',
+    route: 'short_name',
+    sublocality_level_1: 'long_name',
+    locality: 'long_name',
+    administrative_area_level_2: 'long_name',
+    administrative_area_level_1: 'long_name',
+    country: 'long_name',
+    postal_code: 'long_name'
+  };
+
+  //region initAutocomplete()
+  function manualAutocomplete() {
+    //region pick-address setup
+    try {
+      let pac_input = document.getElementById('pick-address-edt');
+      (function pacSelectFirst(input) {
+        if (input != null) {
+          let _addEventListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
+
+          function addEventListenerWrapper(type, listener) {
+            if (type === "keydown") {
+              let orig_listener = listener;
+              listener = function (event) {
+                let suggestion_selected = $(".pac-item-selected").length > 0;
+                if (event.which === 13 && !suggestion_selected) {
+                  var simulated_downarrow = $.Event("keydown", {keyCode: 40, which: 40});
+                  orig_listener.apply(input, [simulated_downarrow]);
+                }
+                orig_listener.apply(input, [event]);
+              };
+            }
+            _addEventListener.apply(input, [type, listener]);
+          }
+
+          input.addEventListener = addEventListenerWrapper;
+          input.attachEvent = addEventListenerWrapper;
+
+          autocomplete_places = new google.maps.places.Autocomplete(
+                  input, {types: ['geocode']});
+        }
+      })(pac_input);
+      if (autocomplete_places != null) {
+        autocomplete_places.inputId = 'pick-address-edt';
+        autocomplete_places.setFields(['address_component']);
+
+        autocomplete_places.addListener('place_changed', fillInAddress_edt, function () {
+
+        });
+      }
+    } catch (e) {
+
+    }
+    //endregion
+  }
+
+  function initAutocomplete() {
+    try {
+      //region pick-address setup
+      let pac_input = document.getElementById('pick-address');
+      (function pacSelectFirst(input) {
+        if (input != null) {
+          let _addEventListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
+
+          function addEventListenerWrapper(type, listener) {
+            if (type === "keydown") {
+              let orig_listener = listener;
+              listener = function (event) {
+                let suggestion_selected = $(".pac-item-selected").length > 0;
+                if (event.which === 13 && !suggestion_selected) {
+                  let simulated_downarrow = $.Event("keydown", {keyCode: 40, which: 40});
+                  orig_listener.apply(input, [simulated_downarrow]);
+                }
+                orig_listener.apply(input, [event]);
+              };
+            }
+            _addEventListener.apply(input, [type, listener]);
+          }
+
+          input.addEventListener = addEventListenerWrapper;
+          input.attachEvent = addEventListenerWrapper;
+
+          autocomplete_places = new google.maps.places.Autocomplete(
+                  input, {types: ['geocode']});
+        }
+      })(pac_input);
+      if (autocomplete_places != null) {
+        autocomplete_places.inputId = 'pick-address';
+        autocomplete_places.setFields(['address_component']);
+
+        autocomplete_places.addListener('place_changed', fillInAddress, function () {
+
+        });
+      }
+      //endregion
+    } catch (e) {
+
+    }
+
+
+  }
+
+  //endregion
+  //region fillInAddress() For pick-address
+  function fillInAddress() {
+    try {
+      //region autocomplete_places fill
+      if (autocomplete_places != null) {
+        let place = autocomplete_places.getPlace();
+        if (place != null) {
+          for (let component in componentForm) {
+            $('input[name=' + component + '].main_address').val('');
+          }
+          if (place.address_components != null) {
+            for (let i = 0; i < place.address_components.length; i++) {
+              let addressType = place.address_components[i].types[0];
+              if (componentForm[addressType]) {
+                let val = place.address_components[i][componentForm[addressType]];
+                $('input[name=' + addressType + '].main_address').val(val);
+              }
+            }
+
+            let query_address = document.getElementById('pick-address').value;
+            let street_number = $('input[name=street_number].main_address').val();
+            let street_route = $('input[name=route].main_address').val();
+            if (street_number.length <= 0) {
+              let temp_address = query_address.split(',');
+              let temp_streets = '';
+              if (temp_address.length > 0) {
+                temp_streets = temp_address[0];
+              }
+              if (temp_streets.indexOf(street_route + 'reet') !== -1) {
+                temp_streets = temp_streets.replace(street_route + 'reet', ' ');
+              } else if (temp_streets.indexOf(street_route + 'eet') !== -1) {
+                temp_streets = temp_streets.replace(street_route + 'eet', ' ');
+              } else {
+                temp_streets = temp_streets.replace(street_route, ' ');
+              }
+              street_number = temp_streets.trim();
+            }
+            let street_address = street_number + ' ' + street_route;
+            let suburb_address = $('input[name=sublocality_level_1].main_address').val();
+            let town_address = $('input[name=locality].main_address').val();
+            let municipality_address = $('input[name=administrative_area_level_2].main_address').val();
+            let province_address = $('input[name=administrative_area_level_1].main_address').val();
+            let postal_code_address = $('input[name=postal_code].main_address').val();
+            let country_address = $('input[name=country].main_address').val();
+
+
+            //region Change street address
+            $('input[name=street_address].main_address').val(street_address);
+
+            //endregion
+            //region Change suburb address
+            $('input[name=suburb_address].main_address').val(suburb_address);
+
+            //endregion
+            //region Change town address
+            $('input[name=town_address].main_address').val(town_address);
+
+            //endregion
+            //region Change province address
+            $('input[name=province_address].main_address').val(province_address);
+
+            //endregion
+            //region Change postal code address
+            $('input[name=postal_code_address].main_address').val(postal_code_address);
+            //endregion
+
+          }
+        }
+      }
+      //endregion
+    } catch (e) {
+
+    }
+
+  }
+
+  //endregion
+  //region fillInAddress_edt() For pick-address-edt
+  function fillInAddress_edt() {
+    try {
+      //region autocomplete_places fill
+      if (autocomplete_places != null) {
+        let place = autocomplete_places.getPlace();
+        if (place != null) {
+          for (let component in componentForm) {
+            $('input[name=' + component + '].main_address').val('');
+          }
+          if (place.address_components != null) {
+            for (let i = 0; i < place.address_components.length; i++) {
+              let addressType = place.address_components[i].types[0];
+              if (componentForm[addressType]) {
+                let val = place.address_components[i][componentForm[addressType]];
+                $('input[name=' + addressType + '].main_address').val(val);
+              }
+            }
+
+            let query_address = document.getElementById('pick-address-edt').value;
+            let street_number = $('input[name=street_number].main_address').val();
+            let street_route = $('input[name=route].main_address').val();
+            if (street_number.length <= 0) {
+              let temp_address = query_address.split(',');
+              let temp_streets = '';
+              if (temp_address.length > 0) {
+                temp_streets = temp_address[0];
+              }
+              if (temp_streets.indexOf(street_route + 'reet') !== -1) {
+                temp_streets = temp_streets.replace(street_route + 'reet', ' ');
+              } else if (temp_streets.indexOf(street_route + 'eet') !== -1) {
+                temp_streets = temp_streets.replace(street_route + 'eet', ' ');
+              } else {
+                temp_streets = temp_streets.replace(street_route, ' ');
+              }
+              street_number = temp_streets.trim();
+            }
+            let street_address = street_number + ' ' + street_route;
+            let suburb_address = $('input[name=sublocality_level_1].main_address').val();
+            let town_address = $('input[name=locality].main_address').val();
+            let municipality_address = $('input[name=administrative_area_level_2].main_address').val();
+            let province_address = $('input[name=administrative_area_level_1].main_address').val();
+            let postal_code_address = $('input[name=postal_code].main_address').val();
+            let country_address = $('input[name=country].main_address').val();
+
+
+            //region Change Address 1
+            $('input[name=address1].main_address').val(street_address);
+
+            //endregion
+            //region Change Address 2
+            $('input[name=address2].main_address').val(suburb_address);
+
+            //endregion
+            //region Change Address 3
+            $('input[name=address3].main_address').val(town_address);
+
+            //endregion
+            //region Change Address 4
+            $('input[name=address4].main_address').val(province_address);
+
+            //endregion
+            //region Change Postal Code
+            $('input[name=postcode].main_address').val(postal_code_address);
+            //endregion
+            //region Change Suburb
+            $('input[name=suburb].main_address').val(suburb_address);
+            //endregion
+            //region Change Area
+            $('input[name=area].main_address').val(town_address);
+            //endregion
+          }
+        }
+      }
+      //endregion
+
+    } catch (e) {
+
+    }
+  }
+
+  //endregion
+  //region Geolocate()
+  function geolocate() {
+    try {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          let geolocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+
+          let circle = new google.maps.Circle(
+                  {center: geolocation, radius: position.coords.accuracy});
+          if (autocomplete_places != null) {
+            autocomplete_places.setBounds(circle.getBounds());
+          }
+          if (autocomplete_modal_places != null) {
+            autocomplete_modal_places.setBounds(circle.getBounds());
+          }
+        });
+      }
+    } catch (e) {
+
+    }
+  }
+
+  //endregion
+
+
+  //endregion
+
+</script>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#MyForm").submit(function () {
+      let formData = new FormData($(this)[0]);
+      let url = "{MAIN_URL}App/Extras/Public/Actions/signup.php"; // the script where you handle the form input.
+
+      $.ajax({
+        type: "POST",
+        url: url,
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: formData,
+        beforeSend: function () {
+          $('#message').html("<span class='loading'>Authenticating...<i class='fa fa-spin fa-gear'></i></span>");
+          return true;
+        },
+        success: function (data) {
+          $('#message').html('');
+          if (typeof data !== 'undefined' && data !== null) {
+            if (IsJsonString(data)) {
+              const result = JSON.parse(data);
+              if (result.CODE === "0") {
+                  location.reload();
+              } else {
+                $('#message').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + result.MESSAGE + ' </div>');
+
+              }
+            } else {
+              $('#message').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + data + ' </div>');
+
+            }
+          } else {
+            $('#message').html('<div class="alert alert-danger" role="alert"> <strong>NULL!</strong> ' + data + ' </div>');
+          }
+        },
+        error: function (request, status, error) {
+
+          $('#message').html('<div class="alert alert-danger" role="alert"> <strong>Script!</strong> ' + status + '/' + error  + ' </div>');
+        }
+
+      });
+
+      return false; // avoid to execute the actual submit of the form.
+    });
+
+  });
+</script>
+</body>
+</html>

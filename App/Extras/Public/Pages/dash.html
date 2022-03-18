@@ -1,0 +1,153 @@
+<section class="container-fluid">
+    <section  >
+        <div id="dash_status_overlay" class="overlay"><i class="fa fa-cog fa-spin"></i> <span class="loader">Loading...</span></div>
+        <div class="row center-body" id="dash_status">
+        </div>
+    </section>
+<hr/>
+    <section class="row">
+        <!--region New Ticket-->
+        <div class="col-lg-6">
+            <div class="card  m-2">
+                <div class="card-header">
+                    <h3 class="card-title text-center">New Ticket</h3>
+                </div>
+                <form id="frmNewTicket" enctype="multipart/form-data" >
+                <div class="card-body">
+
+                    <div class="form-floating mb-2">
+                        <select class="form-control" required name="account" id="account" >
+                            <option value="">Select Account...</option>
+                            <optgroup label="Accounts">
+                                {ACCOUNT_OPTIONS}
+                            </optgroup>
+                        </select>
+                        <label for="account">Account</label>
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        <select class="form-control" required name="lob" id="LOB" >
+                            <option value="">Select Line Of Business...</option>
+                            <optgroup>
+                                {LOB_OPTIONS}
+                            </optgroup>
+                        </select>
+                        <label for="LOB">Line Of Business</label>
+                    </div>
+                    <div class="form-floating mb-2">
+                        <input type="text" class="form-control" required name="subject" placeholder="Subject" id="txtSubject">
+                        <label for="txtSubject">Subject</label>
+                    </div>
+                    <div class="form-floating mb-2">
+                        <textarea class="form-control" name="notes" placeholder="Notes" id="txtNotes" style="min-height: 100px"></textarea>
+                        <label for="txtNotes">Notes</label>
+                    </div>
+
+                    <div class="input-field">
+                        <label class="active">Photos</label>
+                        <div class="input-images" style="padding-top: .5rem;"></div>
+                    </div>
+                    <div id="msgTicketBox"></div>
+                </div>
+                    <div class="card-footer" style="display: inherit;padding-bottom: 0.5em">
+                        <button type="reset" class="btn btn-secondary pull-left mb-2">Reset</button>
+                        <button type="submit" class="btn btn-primary pull-right mb-2"><i class="fa fa-save"></i> Save</button>
+                        <div class="clearfix"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--endregion-->
+        <!--region Latest Tickets-->
+        <div class="col-lg-6">
+            <div class="card  m-2">
+                <div class="card-header">
+                    <h3 class="card-title text-center">Latest Tickets</h3>
+                </div>
+                <div class="card-body">
+                    <div id="dash_latest_overlay" class="overlay"><i class="fa fa-cog fa-spin"></i> <span class="loader">Loading...</span></div>
+                    <div id="dash_latest">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--endregion-->
+    </section>
+</section>
+<script type="application/javascript">
+    $(document).ready(function() {
+        $('.input-images').imageUploader();
+        $("#dash_status_overlay").show();
+        $('#dash_status').load('{MAIN_URL}App/Extras/Public/Widgets/fetch_tickets_status_totals.php',{},
+            function (response, status, xhr) {
+                $("#dash_status_overlay").hide();
+            });
+        $("#dash_latest_overlay").show();
+        $('#dash_latest').load('{MAIN_URL}App/Extras/Public/Widgets/fetch_tickets_latest.php',{},
+            function (response, status, xhr) {
+                $("#dash_latest_overlay").hide();
+            });
+
+        $("#frmNewTicket").bind("reset", function() {
+            $('.input-images').html("");
+            $('.input-images').imageUploader();
+        });
+        $("#frmNewTicket").submit(function () {
+            let formData = new FormData($(this)[0]);
+            let url = "{MAIN_URL}App/Extras/Public/Actions/new_ticket.php"; // the script where you handle the form input.
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                beforeSend: function () {
+                    $('#msgTicketBox').html("<span class='loading'>Saving...<i class='fa fa-spin fa-gear'></i></span>");
+                    return true;
+                },
+                success: function (data) {
+                    $('#msgTicketBox').html('');
+                    if (typeof data !== 'undefined' && data !== null) {
+                        if (IsJsonString(data)) {
+                            const result = JSON.parse(data);
+                            if (result.CODE === "0") {
+                                toastr.success(result.MESSAGE, 'Success!');
+                                $("#frmNewTicket").trigger("reset");
+
+                                $("#dash_status_overlay").show();
+                                $('#dash_status').load('{MAIN_URL}App/Extras/Public/Widgets/fetch_tickets_status_totals.php',{},
+                                    function (response, status, xhr) {
+                                        $("#dash_status_overlay").hide();
+                                    });
+                                $("#dash_latest_overlay").show();
+                                $('#dash_latest').load('{MAIN_URL}App/Extras/Public/Widgets/fetch_tickets_latest.php',{},
+                                    function (response, status, xhr) {
+                                        $("#dash_latest_overlay").hide();
+                                    });
+
+                            } else {
+                                $('#msgTicketBox').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + result.MESSAGE + ' </div>');
+
+                            }
+                        } else {
+                            $('#msgTicketBox').html('<div class="alert alert-danger" role="alert"> <strong>Oh snap!</strong> ' + data + ' </div>');
+
+                        }
+                    } else {
+                        $('#msgTicketBox').html('<div class="alert alert-danger" role="alert"> <strong>NULL!</strong> ' + data + ' </div>');
+                    }
+                },
+                error: function (request, status, error) {
+
+                    $('#msgTicketBox').html('<div class="alert alert-danger" role="alert"> <strong>Script!</strong> ' + status + '/' + error  + ' </div>');
+                }
+
+            });
+
+            return false; // avoid to execute the actual submit of the form.
+        });
+    });
+
+</script>

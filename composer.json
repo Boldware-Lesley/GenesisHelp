@@ -1,0 +1,17 @@
+{
+  "require": {
+    "paypal/rest-api-sdk-php": "1.10.0",
+    "phpmailer/phpmailer": "^6.0",
+    "league/oauth2-google": "*",
+    "phpoffice/phpspreadsheet": "*",
+    "mpdf/qrcode": "*",
+    "mpdf/mpdf": "*",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-gd": "*",
+    "ext-pdo": "*",
+    "ext-openssl": "*",
+    "ext-imap": "*",
+    "ext-fileinfo": "*"
+  }
+}
