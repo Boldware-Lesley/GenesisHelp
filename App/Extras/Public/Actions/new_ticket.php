@@ -45,11 +45,10 @@ try {
             $p_lobcode = trim($_REQUEST["lob"]);
             $p_description = trim($_REQUEST["subject"]);
             $p_notes = trim($_REQUEST["notes"]);
-            $p_priority="";
+            $p_priority="1";
             $p_jobtype="";
-            $p_logmethod="";
+            $p_logmethod="WEB";
             $p_techcode="";
-            $p_priority="";
             $p_billcode="";
             $p_stockcode="";
             $p_linkcode="";

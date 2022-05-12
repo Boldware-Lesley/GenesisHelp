@@ -51,12 +51,14 @@ class MyConnection
     public function Open()
     {
         try {
+
             if (extension_loaded('sqlsrv')) {
-                $this->db_pdo = new PDO($this->db_type . ":Server=" . $this->db_host . ", " . $this->db_port . ";Database=" . $this->db_name . ";LoginTimeout=5", $this->db_user, $this->db_pass);
+                $con_string=$this->db_type . ":server=" . $this->db_host . "," . $this->db_port . ";Database=" . $this->db_name . ";LoginTimeout=5;TrustServerCertificate=0;Encrypt=1;";
+                $this->db_pdo = new PDO($con_string, $this->db_user, $this->db_pass);
                 if (isset($this->db_pdo)) {
-                    $this->db_pdo->setAttribute(PDO::SQLSRV_ATTR_QUERY_TIMEOUT, 5);
+
                     $this->db_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    $this->db_pdo->setAttribute(PDO::SQLSRV_ATTR_ENCODING, PDO::SQLSRV_ENCODING_SYSTEM);
+
                     return true;
                 }
 
